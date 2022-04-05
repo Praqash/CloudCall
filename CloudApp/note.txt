@@ -1,0 +1,325 @@
+select-Divisin
+1) All the users- Name, skills queues, Roles(optional), utilization(optional)
+
+2) Queues- Who all are present in this queue, type of routing
+
+response = scim_api_instance.get_scim_users(filter = "division eq Dev")
+
+
+
+
+
+
+
+
+
+Purecloud Satellite Projects 
+ 
+1.	IODP tool 
+2.	API conversion tool. We have started working on this tool. If you could guide us to efficiently design this. It will be very helpful
+Example –
+o	Agent level reports for Skills, Divisions, Roles etc 
+o	Queue Dependency reports 
+o	Many more 
+a.	Queue report 
+a.	Filter : Division,
+b.	Columns : Queue(all) -> Agents -> Per queue Routing method, evaluation method, wrapupPrompt, servicelevel(percentage) 
+b.	Agent Report
+a.	Filters : Division
+b.	Columns : Q's, Skills, Agent Details(name, Email Id)
+c.	Agent Roles report
+a.	Filter : Division(users), Roles(users), Group(user), Location(users)
+b.	Column : Name, Active, Division, License used , Email, Phone, Acd Skills, Roles, Utilization, location, Group
+c.	If possible : Role : with the Division to which  it is allowed - 
+1.	Display :
+a.	Employee, Austria, Germany, Swizerland
+b.	Local-User, Austria Germany Swizerland
+ 
+2.	 
+ 
+2.	We are also looking forward to Design a Datatable Edit/update tool for the long run. 
+a.	You can share some feedback on this as well
+ 
+3.	AWS account setup -
+ 
+
+
+ Header(done), progress bar(done), back button on app(done), same page, colon in utilization
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+res = routing_api_instance.get_routing_queues_divisionviews_all()
+    for p in range(1,(res.page_count)+1):
+         res = routing_api_instance.get_routing_queues_divisionviews_all(page_number=p).entities
+         for r in res:
+            division.append(r.division.name + ':' + r.division.id)
+    division= list(set(division))
+    division.sort()
+    for name in division:
+        dname.append(name.split(':'))
+    context={"dname": dname}
+    return render(request, 'CloudApp/filter_agent.html',context)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="col-md-4" style="width: 33%; margin-left: 33%;text-align: center;">
+    <form action="{% url 'report' %}" method="post">
+        {% csrf_token %}
+       
+        <h4>User Names</h4>
+        <select class= "form-control" name = "user_id" value="{{user.id}}">
+                <option value=''>--Select User Name--</option>
+                {% for user in response %}
+                <option value="{{user.id}}"> {{user.display_name}} -> {{user.id}}</option>
+                {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary" style="margin-bottom:10px ;">Submit</button>
+    </form>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def index(request):
+    response2=[]
+    response1 = routing_api_instance.get_routing_queues_divisionviews_all()
+    count = user_api_instance.get_users().page_count
+    for count in range(1, count+1):
+        response2= response2 + (user_api_instance.get_users(page_number=count).entities) 
+    context={"entity": response1.entities,
+             "entity1": response2}
+    print(response2)
+    return render(request, 'CloudApp/index.html', context)
+
+
+
+
+
+
+
+
+
+
+    l= l+1
+    #response1 = routing_api_instance.get_routing_queues_divisionviews_all()
+    #count = user_api_instance.get_users().page_count
+    #for count in range(1, count+1):
+        #response2= response2 + (user_api_instance.get_users(page_number=count).entities) 
+        #response = authorization_api_instance.get_user_roles(user_id)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  def download(request):
+    
+    display_name=request.session[ 'display_name' ]
+    user_name=request.session[ 'user_name' ]         
+    queues = request.session['queues']
+    skills = request.session['skills']
+    response = HttpResponse('')
+    response['Content-Disposition'] = 'attachment; filename=report.csv'
+    writer = csv.writer(response)
+    writer.writerow([ 'Display Name', 'User Name', 'Queue', 'Skill'])
+    for d in display_name:
+        writer.writerow([d])
+    for u in user_name:
+        writer.writerow([d, u])
+    for qu in queues:
+        for q in qu:
+            writer.writerow([d, u, q])
+    for sk in skills:
+        for s in sk:
+            writer.writerow([d,u,q,s])
+    return response
+    
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""def display(request):
+    response1=[]
+    if request.method == "POST":
+        user_id = request.POST.get("user_id")
+        division_name= request.POST.get("division_name")
+        if user_id:
+            #response = authorization_api_instance.get_user_roles(user_id)
+            context= {"response": response.roles}
+            return render(request, 'CloudApp/display.html', context)
+        elif division_name:
+            response= (scim_api_instance.get_scim_users(count= 0))
+            count= response.total_results
+            response1= ((scim_api_instance.get_scim_users(count=count,attributes='userName,displayName', filter = f"division eq {division_name}")))
+            context= {"response": response1.resources}
+            return render(request, 'CloudApp/display.html', context)"""
+
+
+
+
+
+
+
+
+Agent Report_date(done)
+Division, on third coloumn (done)
+Reduce size of download button, push it to right(done)
+Heading on top middile(done)
+Proficiency
+Schneider logo(done)
+Font size(done)
+
+
+
+
+
+
+
+Standard Routing -> RR=[]
+Bulleseye Routing -> RR=[], Bulleseye, Rings
+Prefered Agent -> RR=[operator]=any
+    1)Standard =[]
+    2)Bulleseye= [], Bulleseye, Rings
