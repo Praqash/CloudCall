@@ -43,12 +43,12 @@
         </div>
 
 
-    <form action="{% url 'filter' %}" method="post">
+    <form action="{% url 'filter' %}" method="post" required>
         <div class="col-md-4" style="width: 33%; margin-left: 34%;text-align: center;">
     
         {% csrf_token %}
         <div style="float: left;padding: 5px;">
-        <input  type="radio" id="html" name="filter" value="Division">
+        <input  type="radio" id="html" name="filter" value="Division" required>
         <label >Division</label>
         </div>
         <div style="float: left;padding: 5px;">
@@ -80,7 +80,7 @@
             {% csrf_token %}
            
             <h5>{{filter}}</h5>
-            <select class= "form-control" name = "var" value="{{var}}">
+            <select id="s" required class= "form-control" name = "var" value="{{var}}">
                     <option value=''>--{{filter}}--</option>
                     {% for var in var %}
                     <option value="{{var.0}}:{{var.1}}:{{filter}}">{{var.0}}</option>
@@ -163,6 +163,11 @@
 </style>
 <script type="text/javascript">
   function spinner() {
+    const s= document.querySelector('#s').innerHTML
+
+    if (s != null) 
+{
       document.getElementById("not-visible").style.display = "block";
+    }
   }
 </script>

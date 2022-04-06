@@ -5,6 +5,7 @@ from PureCloudPlatformClientV2.rest import ApiException
 import PureCloudPlatformClientV2
 import csv
 import datetime
+import json
 
 
 
@@ -291,11 +292,13 @@ def agent_role_report(request):
     display_name=[]
     user_name=[]
     group_id=[]
+    mc=[]
     dicts={}
     active=[]
     var=[]
     roles=[]
     groups=[]
+    u=[]
     l=0
     if request.method == "POST":
         var=request.POST.get("var")
@@ -326,8 +329,15 @@ def agent_role_report(request):
                     if j== var[k][0]:
                         licenses.append(var[k][1])
                 l=l+1
-    
-           
+            for id in user_id:
+                x = routing_api_instance.get_routing_user_utilization(user_id=id).utilization
+                u.append([x for x in x])
+            for i in u:
+                mc.append([x.get(i[j]).maximum_capacity for j in range (6)])
+            for n in range(len (user_id)):
+                utilization.append(list(zip(u[n], mc[n])))
+                  
+            
             for id in user_id:
                 x = scim_api_instance.get_scim_user(attributes='groups', user_id=id)
                 if x.groups:
@@ -348,9 +358,6 @@ def agent_role_report(request):
                     roles.append([x.name for x in x])
                 else:
                     roles.append(None)
-                
-                x = routing_api_instance.get_routing_user_utilization(user_id=id).utilization
-                utilization.append([x for x in x])
                 
                 x = user_api_instance.get_user(user_id=id, expand= "locations")
                 if x.locations !=[]:
@@ -415,8 +422,13 @@ def agent_role_report(request):
                 display_name.append(x.display_name)
                 user_name.append(x.user_name)
                 active.append(x.active)
+            for id in user_id:
                 x = routing_api_instance.get_routing_user_utilization(user_id=id).utilization
-                utilization.append([x for x in x])
+                u.append([x for x in x])
+            for i in u:
+                mc.append([x.get(i[j]).maximum_capacity for j in range (6)])
+            for n in range(len (user_id)):
+                utilization.append(list(zip(u[n], mc[n])))
             
                 x = user_api_instance.get_user_routingskills(user_id=id).entities
                 if x:
@@ -473,9 +485,13 @@ def agent_role_report(request):
                 user_name.append(x.user_name)
                 
                 
+            for id in user_id:
                 x = routing_api_instance.get_routing_user_utilization(user_id=id).utilization
-                utilization.append([x for x in x])
-           
+                u.append([x for x in x])
+            for i in u:
+                mc.append([x.get(i[j]).maximum_capacity for j in range (6)])
+            for n in range(len (user_id)):
+                utilization.append(list(zip(u[n], mc[n])))
                 x = user_api_instance.get_user_routingskills(user_id=id).entities
                 if x:
                     acd_skills.append([x.name for x in x])
