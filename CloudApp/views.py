@@ -9,8 +9,7 @@ import json
 
 
 
-CLIENT_ID = "4f850f92-fbc8-4f13-ad52-5941d2cf6add"
-CLIENT_SECRET = "hR_fdDf2dCUzMW4TjLKBLRSGa7bKaLU98IJszo7zRTk"
+
 ENVIRONMENT = "mypurecloud.de" 
 region = PureCloudPlatformClientV2.PureCloudRegionHosts["eu_central_1"]
 PureCloudPlatformClientV2.configuration.host = region.get_api_host()
